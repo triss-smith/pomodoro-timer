@@ -11,22 +11,29 @@ function Pomodoro() {
   const [breakTimer,setBreakTimer] = useState(5);
   const [currentTimer,setCurrentTimer] = useState(focusTimer*60);
   const [isFocus,setFocus] = useState(true);
+  const [progress,setProgress] = useState(0);
+  let percent = (focusTimer*60)/100;
+  let percentCounter = progress/percent;
+  
 
 
     const focusTimerIncrement = () => {
-      if(focusTimer < 60 ) {
-      setFocusTimer(focusTimer+1)
-      console.log(currentTimer)
-      console.log(focusTimer*60);
-      }
-      setCurrentTimer((focusTimer+1)*60);
-
+      console.log(focusTimer)
+      console.log(focusTimer < 60 && focusTimer >= 5)
+      if(focusTimer < 60 && focusTimer > 5 ) {
+        setCurrentTimer((focusTimer+1)*60);
+      setFocusTimer(focusTimer+1)      
+      } 
     };    
     const focusTimerDecrement = () => {
-      if(focusTimer > 5) {
+      
+      if(focusTimer > 5 && focusTimer < 60) {
+        setCurrentTimer((focusTimer-1)*60)
       setFocusTimer(focusTimer-1)
       }
-      setCurrentTimer((focusTimer-1)*60);
+    
+      
+      
 
     };
     const breakTimerIncrement = () => {
@@ -42,17 +49,24 @@ function Pomodoro() {
     };
     const stopButton = () => {
       setCurrentTimer(focusTimer*60)
+      setIsTimerRunning(false);
+      setProgress(0)
     }
     
 
   useInterval(
     () => {
+        setProgress((previous) => (previous + percent))
+        console.log(progress)
+      
       setCurrentTimer(currentTimer -1)
       if(currentTimer == 0 && isFocus == true) {
         new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
         setCurrentTimer(breakTimer*60);
-        setFocus(!isFocus);
+        setFocus((previous) => !previous);
+        percent = (breakTimer*60)/100;
       }
+      
     },
     isTimerRunning ? 1000 : null
   );
@@ -77,6 +91,8 @@ function Pomodoro() {
                 className="btn btn-secondary"
                 data-testid="decrease-focus"
                 onClick={focusTimerDecrement}
+                disabled={isTimerRunning}
+
               >
                 <span className="oi oi-minus" />
               </button>
@@ -86,6 +102,8 @@ function Pomodoro() {
                 className="btn btn-secondary"
                 data-testid="increase-focus"                
                 onClick={focusTimerIncrement}
+                disabled={isTimerRunning}
+
               >
                 <span className="oi oi-plus" name="focusTime"/>
               </button>
@@ -106,6 +124,8 @@ function Pomodoro() {
                   className="btn btn-secondary"
                   data-testid="decrease-break"
                   onClick={breakTimerDecrement}
+
+                  disabled={isTimerRunning}
                 >
                   <span className="oi oi-minus" />
                 </button>
@@ -115,6 +135,8 @@ function Pomodoro() {
                   className="btn btn-secondary"
                   data-testid="increase-break"
                   onClick={breakTimerIncrement}
+                  disabled={isTimerRunning}
+
                 >
                   <span className="oi oi-plus" />
                 </button>
@@ -136,6 +158,7 @@ function Pomodoro() {
               data-testid="play-pause"
               title="Start or pause timer"
               onClick={playPause}
+
             >
               <span
                 className={classNames({
@@ -150,6 +173,7 @@ function Pomodoro() {
               type="button"
               className="btn btn-secondary"
               title="Stop the session"
+              onClick={stopButton}
             >
               <span className="oi oi-media-stop" />
             </button>
@@ -161,10 +185,10 @@ function Pomodoro() {
         <div className="row mb-2">
           <div className="col">
             {/* TODO: Update message below to include current session (Focusing or On Break) and total duration */}
-            <h2 data-testid="session-title">{isFocus ? "Focusing" : "Breaking"} for {secondsToDuration(currentTimer)} minutes</h2>
+            <h2 data-testid="session-title">{isFocus ? "Focusing" : "Breaking"} for {isFocus ? minutesToDuration(focusTimer) : minutesToDuration(breakTimer)} minutes</h2>
             {/* TODO: Update message below to include time remaining in the current session */}
             <p className="lead" data-testid="session-sub-title">
-              25:00 remaining
+              {secondsToDuration(currentTimer)} remaining
             </p>
           </div>
         </div>
@@ -176,8 +200,8 @@ function Pomodoro() {
                 role="progressbar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                aria-valuenow="0" // TODO: Increase aria-valuenow as elapsed time increases
-                style={{ width: "0%" }} // TODO: Increase width % as elapsed time increases
+                aria-valuenow= {percentCounter} // TODO: Increase aria-valuenow as elapsed time increases
+                style={{ width: (percentCounter + "%") }} // TODO: Increase width % as elapsed time increases
               />
             </div>
           </div>
