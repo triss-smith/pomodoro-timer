@@ -11,16 +11,15 @@ function Pomodoro() {
   const [breakTimer,setBreakTimer] = useState(5);
   const [currentTimer,setCurrentTimer] = useState(focusTimer*60);
   const [isFocus,setFocus] = useState(true);
-  const [progress,setProgress] = useState(0);
   let percent = (focusTimer*60)/100;
-  let percentCounter = progress/percent;
+  const [progress,setProgress] = useState(0);
+  const [percentCounter,setPercentCounter] = useState(0);
+  const [progressVisibility,setProgressVisibility] = useState(false);
+  
   
 
-
     const focusTimerIncrement = () => {
-      console.log(focusTimer)
-      console.log(focusTimer < 60 && focusTimer >= 5)
-      if(focusTimer < 60 && focusTimer > 5 ) {
+      if(focusTimer < 60 && focusTimer >= 5 ) {
         setCurrentTimer((focusTimer+1)*60);
       setFocusTimer(focusTimer+1)      
       } 
@@ -31,9 +30,6 @@ function Pomodoro() {
         setCurrentTimer((focusTimer-1)*60)
       setFocusTimer(focusTimer-1)
       }
-    
-      
-      
 
     };
     const breakTimerIncrement = () => {
@@ -50,29 +46,46 @@ function Pomodoro() {
     const stopButton = () => {
       setCurrentTimer(focusTimer*60)
       setIsTimerRunning(false);
-      setProgress(0)
+      setProgress(0);
+      setFocus(true);
+      setPercentCounter(0)
+      setProgressVisibility(false)
     }
     
 
   useInterval(
     () => {
-        setProgress((previous) => (previous + percent))
-        console.log(progress)
+      setPercentCounter(percentCounter+1)
+      if((percentCounter  + (percent - Math.floor(percent))) == percent) {
+        
+        setProgress(progress + 1);
+       setPercentCounter(1);
+      console.log("1%")
+      }
       
+      
+      
+      console.log(percentCounter,percent)
       setCurrentTimer(currentTimer -1)
       if(currentTimer == 0 && isFocus == true) {
         new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
         setCurrentTimer(breakTimer*60);
         setFocus((previous) => !previous);
         percent = (breakTimer*60)/100;
+        setPercentCounter(1);
+        setProgress(0)
       }
-      
+      else if(currentTimer == 0 && isFocus == false) {
+        new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
+        setIsTimerRunning(false);
+      }
     },
     isTimerRunning ? 1000 : null
   );
 
   function playPause() {
     setIsTimerRunning((prevState) => !prevState);
+    setProgressVisibility(true)
   }
 
   return (
@@ -180,7 +193,8 @@ function Pomodoro() {
           </div>
         </div>
       </div>
-      <div>
+      <div className={classNames({
+        "d-none":!progressVisibility})}>
         {/* TODO: This area should show only when a focus or break session is running or pauses */}
         <div className="row mb-2">
           <div className="col">
@@ -200,8 +214,8 @@ function Pomodoro() {
                 role="progressbar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                aria-valuenow= {percentCounter} // TODO: Increase aria-valuenow as elapsed time increases
-                style={{ width: (percentCounter + "%") }} // TODO: Increase width % as elapsed time increases
+                aria-valuenow= {progress} // TODnO: Increase aria-valuenow as elapsed time increases
+                style={{ width: (progress + "%") }} // TODO: Increase width % as elapsed time increases
               />
             </div>
           </div>
