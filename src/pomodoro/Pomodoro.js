@@ -11,24 +11,26 @@ function Pomodoro() {
   const [breakTimer,setBreakTimer] = useState(5);
   const [currentTimer,setCurrentTimer] = useState(focusTimer*60);
   const [isFocus,setFocus] = useState(true);
-  let percent = (focusTimer*60)/100;
+  const [percent,setPercent] = useState((focusTimer*60)/100);
   const [progress,setProgress] = useState(0);
-  const [percentCounter,setPercentCounter] = useState(0);
+  const [percentCounter,setPercentCounter] = useState(1);
   const [progressVisibility,setProgressVisibility] = useState(false);
   
   
 
     const focusTimerIncrement = () => {
       if(focusTimer < 60 && focusTimer >= 5 ) {
-        setCurrentTimer((focusTimer+1)*60);
-      setFocusTimer(focusTimer+1)      
+        setCurrentTimer((focusTimer+5)*60);
+      setFocusTimer(focusTimer+5) 
+      setPercent((focusTimer*60)/100)  
       } 
     };    
     const focusTimerDecrement = () => {
       
-      if(focusTimer > 5 && focusTimer < 60) {
-        setCurrentTimer((focusTimer-1)*60)
-      setFocusTimer(focusTimer-1)
+      if(focusTimer > 5 && focusTimer <= 60) {
+        setCurrentTimer((focusTimer-5)*60)
+      setFocusTimer(focusTimer-5)
+      setPercent((focusTimer*60)/100)
       }
 
     };
@@ -55,29 +57,31 @@ function Pomodoro() {
 
   useInterval(
     () => {
-      setPercentCounter(percentCounter+1)
-      if((percentCounter  + (percent - Math.floor(percent))) == percent) {
+      setPercentCounter((previous) => previous +1)
+      if((percentCounter  + (percent - Math.floor(percent))) >= percent) {
         
-        setProgress(progress + 1);
+        setProgress((previous) => previous + 1);
        setPercentCounter(1);
-      console.log("1%")
       }
       
       
       
-      console.log(percentCounter,percent)
       setCurrentTimer(currentTimer -1)
-      if(currentTimer == 0 && isFocus == true) {
+      if(currentTimer == 1 && isFocus == true  ) {
         new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
         setCurrentTimer(breakTimer*60);
         setFocus((previous) => !previous);
-        percent = (breakTimer*60)/100;
+        setPercent((breakTimer*60)/100);
         setPercentCounter(1);
         setProgress(0)
       }
-      else if(currentTimer == 0 && isFocus == false) {
+      else if(currentTimer == 1 && isFocus == false) {
         new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
-        setIsTimerRunning(false);
+        setCurrentTimer(focusTimer*60);
+        setFocus((previous) => !previous);
+        setPercent((focusTimer*60)/100);
+        setPercentCounter(1);
+        setProgress(0)
       }
     },
     isTimerRunning ? 1000 : null
@@ -94,7 +98,7 @@ function Pomodoro() {
         <div className="col">
           <div className="input-group input-group-lg mb-2">
             <span className="input-group-text" data-testid="duration-focus">
-              Focus Duration: {secondsToDuration(focusTimer*60)}
+              Focus Duration: {minutesToDuration(focusTimer)}
               
             </span>
             <div className="input-group-append">
@@ -199,7 +203,7 @@ function Pomodoro() {
         <div className="row mb-2">
           <div className="col">
             {/* TODO: Update message below to include current session (Focusing or On Break) and total duration */}
-            <h2 data-testid="session-title">{isFocus ? "Focusing" : "Breaking"} for {isFocus ? minutesToDuration(focusTimer) : minutesToDuration(breakTimer)} minutes</h2>
+            <h2 data-testid="session-title">{isFocus ? "Focusing" : "On Break"} for {isFocus ? minutesToDuration(focusTimer) : minutesToDuration(breakTimer)} minutes</h2>
             {/* TODO: Update message below to include time remaining in the current session */}
             <p className="lead" data-testid="session-sub-title">
               {secondsToDuration(currentTimer)} remaining
