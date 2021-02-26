@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import classNames from "../utils/class-names";
 import { minutesToDuration, secondsToDuration } from "../utils/duration";
 import useInterval from "../utils/useInterval";
+import Progress from "./Progress.js";
+import FocusButtons from "./FocusButtons.js";
+import BreakButtons from "./BreakButtons.js"
 
 function Pomodoro() {
   // Timer starts out paused
@@ -46,12 +49,12 @@ function Pomodoro() {
       }
     };
     const stopButton = () => {
-      setCurrentTimer(focusTimer*60)
+      setCurrentTimer(focusTimer*60);
       setIsTimerRunning(false);
       setProgress(0);
       setFocus(true);
-      setPercentCounter(0)
-      setProgressVisibility(false)
+      setPercentCounter(0);
+      setProgressVisibility(false);
     }
     
 
@@ -95,72 +98,9 @@ function Pomodoro() {
   return (
     <div className="pomodoro">
       <div className="row">
-        <div className="col">
-          <div className="input-group input-group-lg mb-2">
-            <span className="input-group-text" data-testid="duration-focus">
-              Focus Duration: {minutesToDuration(focusTimer)}
-              
-            </span>
-            <div className="input-group-append">
-              {/* TODO: Implement decreasing focus duration and disable during a focus or break session */}
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-testid="decrease-focus"
-                onClick={focusTimerDecrement}
-                disabled={isTimerRunning}
+        <FocusButtons focusTimer={focusTimer} focusTimerIncrement={focusTimerIncrement} focusTimerDecrement={focusTimerDecrement} isTimerRunning={isTimerRunning} />
+        <BreakButtons breakTimer={breakTimer} breakTimerIncrement={breakTimerIncrement} breakTimerDecrement={breakTimerDecrement} isTimerRunning={isTimerRunning} />
 
-              >
-                <span className="oi oi-minus" />
-              </button>
-              
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-testid="increase-focus"                
-                onClick={focusTimerIncrement}
-                disabled={isTimerRunning}
-
-              >
-                <span className="oi oi-plus" name="focusTime"/>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="col">
-          <div className="float-right">
-            <div className="input-group input-group-lg mb-2">
-              <span className="input-group-text" data-testid="duration-break">
-                {/* TODO: Update this text to display the current break session duration */}
-                Break Duration: {minutesToDuration(breakTimer)}
-              </span>
-              <div className="input-group-append">
-                {/* TODO: Implement decreasing break duration and disable during a focus or break session*/}
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-testid="decrease-break"
-                  onClick={breakTimerDecrement}
-
-                  disabled={isTimerRunning}
-                >
-                  <span className="oi oi-minus" />
-                </button>
-                {/* TODO: Implement increasing break duration and disable during a focus or break session*/}
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-testid="increase-break"
-                  onClick={breakTimerIncrement}
-                  disabled={isTimerRunning}
-
-                >
-                  <span className="oi oi-plus" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
       <div className="row">
         <div className="col">
@@ -197,34 +137,7 @@ function Pomodoro() {
           </div>
         </div>
       </div>
-      <div className={classNames({
-        "d-none":!progressVisibility})}>
-        {/* TODO: This area should show only when a focus or break session is running or pauses */}
-        <div className="row mb-2">
-          <div className="col">
-            {/* TODO: Update message below to include current session (Focusing or On Break) and total duration */}
-            <h2 data-testid="session-title">{isFocus ? "Focusing" : "On Break"} for {isFocus ? minutesToDuration(focusTimer) : minutesToDuration(breakTimer)} minutes</h2>
-            {/* TODO: Update message below to include time remaining in the current session */}
-            <p className="lead" data-testid="session-sub-title">
-              {secondsToDuration(currentTimer)} remaining
-            </p>
-          </div>
-        </div>
-        <div className="row mb-2">
-          <div className="col">
-            <div className="progress" style={{ height: "20px" }}>
-              <div
-                className="progress-bar"
-                role="progressbar"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow= {progress} // TODnO: Increase aria-valuenow as elapsed time increases
-                style={{ width: (progress + "%") }} // TODO: Increase width % as elapsed time increases
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <Progress progressVisibility={progressVisibility} isFocus={isFocus} focusTimer={focusTimer} breakTimer={breakTimer} currentTimer={currentTimer} progress={progress} />
     </div>
   );
 }
