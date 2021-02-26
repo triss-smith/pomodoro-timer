@@ -60,6 +60,8 @@ function Pomodoro() {
 
   useInterval(
     () => {
+
+
       setPercentCounter((previous) => previous +1)
       if((percentCounter  + (percent - Math.floor(percent))) >= percent) {
         
@@ -71,7 +73,7 @@ function Pomodoro() {
       
       setCurrentTimer(currentTimer -1)
       if(currentTimer == 1 && isFocus == true  ) {
-        new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
+        new Audio(`https://sounds-mp3.com/mp3/0011892.mp3`).play();
         setCurrentTimer(breakTimer*60);
         setFocus((previous) => !previous);
         setPercent((breakTimer*60)/100);
@@ -79,7 +81,7 @@ function Pomodoro() {
         setProgress(0)
       }
       else if(currentTimer == 1 && isFocus == false) {
-        new Audio(`${process.env.PUBLIC_URL}/alarm/submarine-dive-horn.mp3`).play();
+        new Audio(`https://sounds-mp3.com/mp3/0011892.mp3`).play();
         setCurrentTimer(focusTimer*60);
         setFocus((previous) => !previous);
         setPercent((focusTimer*60)/100);
