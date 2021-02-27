@@ -73,7 +73,7 @@ function Pomodoro() {
       
       setCurrentTimer(currentTimer -1)
       if(currentTimer == 1 && isFocus == true  ) {
-        new Audio(`https://sounds-mp3.com/mp3/0011892.mp3`).play();
+        new Audio(`https://audio.jukehost.co.uk/61u6QMat3sNozcQGmvGMtSHyEb4ll1nM`).play();
         setCurrentTimer(breakTimer*60);
         setFocus((previous) => !previous);
         setPercent((breakTimer*60)/100);
@@ -81,7 +81,7 @@ function Pomodoro() {
         setProgress(0)
       }
       else if(currentTimer == 1 && isFocus == false) {
-        new Audio(`https://sounds-mp3.com/mp3/0011892.mp3`).play();
+        new Audio(`https://audio.jukehost.co.uk/61u6QMat3sNozcQGmvGMtSHyEb4ll1nM`).play();
         setCurrentTimer(focusTimer*60);
         setFocus((previous) => !previous);
         setPercent((focusTimer*60)/100);
