@@ -19,7 +19,6 @@ function Pomodoro() {
   const [percentCounter,setPercentCounter] = useState(1);
   const [progressVisibility,setProgressVisibility] = useState(false);
   
-  
 
     const focusTimerIncrement = () => {
       if(focusTimer < 60 && focusTimer >= 5 ) {
@@ -60,8 +59,7 @@ function Pomodoro() {
 
   useInterval(
     () => {
-
-
+      isFocus ? setPercent(focusTimer*60/100) : setPercent(breakTimer*60/100)
       setPercentCounter((previous) => previous +1)
       if((percentCounter  + (percent - Math.floor(percent))) >= percent) {
         
@@ -76,7 +74,6 @@ function Pomodoro() {
         new Audio(`https://audio.jukehost.co.uk/61u6QMat3sNozcQGmvGMtSHyEb4ll1nM`).play();
         setCurrentTimer(breakTimer*60);
         setFocus((previous) => !previous);
-        setPercent((breakTimer*60)/100);
         setPercentCounter(1);
         setProgress(0)
       }
@@ -84,7 +81,6 @@ function Pomodoro() {
         new Audio(`https://audio.jukehost.co.uk/61u6QMat3sNozcQGmvGMtSHyEb4ll1nM`).play();
         setCurrentTimer(focusTimer*60);
         setFocus((previous) => !previous);
-        setPercent((focusTimer*60)/100);
         setPercentCounter(1);
         setProgress(0)
       }
@@ -127,7 +123,6 @@ function Pomodoro() {
                 })}
               />
             </button>
-            {/* TODO: Implement stopping the current focus or break session and disable when there is no active session */}
             <button
               type="button"
               className="btn btn-secondary"

@@ -11,7 +11,6 @@ function FocusButtons({focusTimer,focusTimerIncrement,focusTimerDecrement,isTime
               
             </span>
             <div className="input-group-append">
-              {/* TODO: Implement decreasing focus duration and disable during a focus or break session */}
               <button
                 type="button"
                 className="btn btn-secondary"
